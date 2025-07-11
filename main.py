@@ -5,11 +5,14 @@ from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms.openai import OpenAI
 
 # ✅ Configuração da OpenAI (substitua sua chave aqui)
-openai_api_key = os.environ["OPENAI_API_KEY"]
+api_key = os.environ["OPENAI_API_KEY"]
 
 # ✅ Inicializa o LlamaIndex com o JSON
 docs = SimpleDirectoryReader(input_files=["LicitAI.json"]).load_data()
-index = VectorStoreIndex.from_documents(docs, llm=OpenAI(model="gpt-3.5-turbo"))
+index = VectorStoreIndex.from_documents(
+    docs,
+    llm=OpenAI(api_key=api_key, model="gpt-3.5-turbo")
+)
 engine = index.as_query_engine()
 
 # ✅ Inicializa o app FastAPI
@@ -22,3 +25,4 @@ class Pergunta(BaseModel):
 def perguntar(pergunta: Pergunta):
     resposta = engine.query(pergunta.pergunta)
     return {"resposta": resposta.response}
+
