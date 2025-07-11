@@ -6,34 +6,34 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 
-# Carregar variáveis do .env
+# Carrega variáveis de ambiente
 load_dotenv()
 
-# Obter chave da API da OpenAI
+# Obtém chave da API
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
-    raise ValueError("OPENAI_API_KEY não definida no arquivo .env")
+    raise ValueError("OPENAI_API_KEY não definida")
 
-# Carregar documentos
-docs = SimpleDirectoryReader("data").load_data()
+# Carrega diretamente o arquivo JSON da raiz
+docs = SimpleDirectoryReader(input_files=["LicitAI.json"]).load_data()
 
-# Inicializar modelo de embeddings da OpenAI
+# Embedding com chave
 embed_model = OpenAIEmbedding(
     model="text-embedding-3-small",
-    api_key=api_key,
+    api_key=api_key
 )
 
-# Criar índice com modelo de linguagem e embeddings
+# Criação do índice
 index = VectorStoreIndex.from_documents(
     docs,
     llm=OpenAI(api_key=api_key, model="gpt-3.5-turbo"),
     embed_model=embed_model
 )
 
-# Criar aplicação FastAPI
+# FastAPI
 app = FastAPI()
 
-# Permitir requisições CORS (opcional)
+# Middleware CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -42,14 +42,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Criar engine de consulta
+# Query engine
 query_engine = index.as_query_engine()
 
-# Rota principal de consulta
+# Rota básica
 @app.get("/")
-async def root():
-    return {"message": "API da Licitai rodando com sucesso!"}
+def root():
+    return {"message": "API LicitAI rodando com sucesso!"}
 
+# Rota de pergunta
 @app.get("/pergunta/")
 async def pergunta_api(pergunta: str):
     resposta = query_engine.query(pergunta)
