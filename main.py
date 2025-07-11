@@ -5,7 +5,7 @@ from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.llms.openai import OpenAI
 
 # ✅ Configuração da OpenAI (substitua sua chave aqui)
-os.environ["OPENAI_API_KEY"] = "sua-chave-da-openai-aqui"
+openai_api_key = os.environ["OPENAI_API_KEY"]
 
 # ✅ Inicializa o LlamaIndex com o JSON
 docs = SimpleDirectoryReader(input_files=["LicitAI.json"]).load_data()
