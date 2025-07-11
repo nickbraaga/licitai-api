@@ -1,4 +1,4 @@
-openai==1.13.3
+openai==0.28.1
 llama-index==0.10.68
 fastapi==0.111.0
 uvicorn==0.35.0
